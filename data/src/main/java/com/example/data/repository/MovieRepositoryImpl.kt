@@ -1,8 +1,10 @@
 package com.example.data.repository
 
+import com.example.data.models.toDomainDetailModel
 import com.example.data.models.toDomainModel
 import com.example.data.remote.ApiService
 import com.example.domain.models.Movie // Import your domain model
+import com.example.domain.models.MovieDetail
 import com.example.domain.repositories.MovieRepository
 import com.example.domain.utils.ResponseWrapper
 
@@ -57,6 +59,15 @@ class MovieRepositoryImpl(private val apiService: ApiService) : MovieRepository 
             }
         } catch (e: Exception) {
             ResponseWrapper.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
+    }
+
+    override suspend fun getMovieDetails(movieId: Int): ResponseWrapper<MovieDetail> {
+        val response = apiService.getMovieDetails(movieId)
+        return if (response.isSuccessful && response.body() != null) {
+            ResponseWrapper.Success(response.body()!!.toDomainDetailModel())
+        } else {
+            ResponseWrapper.Error("Error: ${response.code()} - ${response.message()}")
         }
     }
 }

@@ -69,7 +69,8 @@ dependencies {
     implementation libs.coroutinesAndroid
     implementation libs.koinAndroid // Koin Android
    // implementation libs.koinViewmodel // Koin ViewModel
-    implementation libs.koinCore // Koin ViewModel
+    implementation libs.koinCore
+    implementation libs.androidx.lifecycle.viewmodel.ktx// Koin ViewModel
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core

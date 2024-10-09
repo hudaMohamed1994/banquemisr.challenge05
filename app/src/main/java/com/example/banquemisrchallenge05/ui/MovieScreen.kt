@@ -1,28 +1,28 @@
 package com.example.banquemisrchallenge05.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.banquemisrchallenge05.ui.viewmodles.MoviesViewModel
 import com.example.domain.models.Movie
-import com.example.banquemisrchallenge05.theme.Banquemisrchallenge05Theme
 
 @Composable
-fun MoviesScreen(moviesViewModel: MoviesViewModel = viewModel()) {
+fun MoviesScreen(navController: NavHostController, moviesViewModel: MoviesViewModel = viewModel()) {
     val tabs = listOf("Now Playing", "Popular", "Upcoming")
-    // start with the now playing index = 0
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    // Observe the movies lists based on tab selection
+    // get selected Tab
     val nowPlayingMovies by moviesViewModel.nowPlayingMovies.collectAsState()
     val popularMovies by moviesViewModel.popularMovies.collectAsState()
     val upcomingMovies by moviesViewModel.upcomingMovies.collectAsState()
@@ -32,8 +32,9 @@ fun MoviesScreen(moviesViewModel: MoviesViewModel = viewModel()) {
         popularMovies,
         upcomingMovies
     )
-     // case it is sideEffect
-    // Fetch movies for selectedTabIndex is our {key} to change the api call when change tab
+
+    // Fetch movies for selectedTabIndex
+    // selectedTabIndex is the key if changed call LaunchedEffect again according to the index
     LaunchedEffect(selectedTabIndex) {
         moviesViewModel.fetchMoviesByTab(selectedTabIndex)
     }
@@ -49,38 +50,52 @@ fun MoviesScreen(moviesViewModel: MoviesViewModel = viewModel()) {
             }
         }
 
-        MovieList(title = tabs[selectedTabIndex], movies = moviesLists[selectedTabIndex])
+        // Show loading indicator or error message if needed
+        if (nowPlayingMovies.isEmpty() && selectedTabIndex == 0) {
+            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+        } else {
+            MovieList(
+                title = tabs[selectedTabIndex],
+                movies = moviesLists[selectedTabIndex],
+                onMovieClick = { movieId ->
+                    navController.navigate("movieDetail/$movieId")
+                }
+            )
+        }
     }
 }
 
 @Composable
-fun MovieList(title: String, movies: List<Movie>) {
+fun MovieList(title: String, movies: List<Movie>, onMovieClick: (Int) -> Unit) {
     Column {
         Text(text = title, style = MaterialTheme.typography.titleMedium)
-        LazyRow {
-            items(movies) { movie ->
-                MovieItem(movie = movie, modifier = Modifier.padding(8.dp))
+
+        if (movies.isEmpty()) {
+            Text(text = "No movies available", style = MaterialTheme.typography.bodyMedium)
+        } else {
+            LazyRow {
+                items(movies) { movie ->
+                    MovieItem(
+                        movie = movie,
+                        modifier = Modifier.padding(8.dp),
+                        onClick = { onMovieClick(movie.id) })
+                }
             }
         }
     }
 }
 
 @Composable
-fun MovieItem(movie: Movie, modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
+fun MovieItem(movie: Movie, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Column(modifier = modifier.clickable(onClick = onClick)) {
         Image(
             painter = rememberImagePainter(movie.posterPath),
-            contentDescription = movie.title
+            contentDescription = movie.title,
+            modifier = Modifier
+                .size(100.dp)
+                .padding(8.dp)
         )
-        Text(text = movie.title)
-        Text(text = movie.releaseDate)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMoviesScreen() {
-    Banquemisrchallenge05Theme {
-        MoviesScreen()
+        Text(text = movie.title, style = MaterialTheme.typography.bodyMedium)
+        Text(text = movie.releaseDate, style = MaterialTheme.typography.bodySmall)
     }
 }

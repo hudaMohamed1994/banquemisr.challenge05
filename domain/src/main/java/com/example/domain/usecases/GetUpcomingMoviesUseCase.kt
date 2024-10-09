@@ -1,7 +1,6 @@
 package com.example.domain.usecases
 
 import com.example.domain.models.Movie
-import com.example.domain.models.MovieResponse
 import com.example.domain.repositories.MovieRepository
 import com.example.domain.utils.ResponseWrapper
 
