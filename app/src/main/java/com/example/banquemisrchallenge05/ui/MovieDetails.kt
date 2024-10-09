@@ -22,6 +22,7 @@ fun MovieDetailScreen(movieId: Int, navController: NavController) {
     }
 
     when (val state = movieDetailState.value) {
+        // loading state
         is MovieDetailViewModel.MovieDetailState.Loading -> {
             Column(modifier = Modifier.padding(16.dp)) {
                 CircularProgressIndicator()

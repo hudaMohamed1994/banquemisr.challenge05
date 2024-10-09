@@ -24,14 +24,20 @@ class MoviesViewModel(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
-// to implement Tabs
+
+    // Loading states for each tab
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     fun fetchMoviesByTab(tabIndex: Int, language: String = "en-US", page: Int = 1) {
         viewModelScope.launch {
+            _isLoading.value = true
             when (tabIndex) {
                 0 -> fetchNowPlayingMovies(language, page)
                 1 -> fetchPopularMovies(language, page)
                 2 -> fetchUpcomingMovies(language, page)
             }
+            _isLoading.value = false
         }
     }
 
@@ -39,6 +45,7 @@ class MoviesViewModel(
         when (val response = movieRepository.getNowPlayingMovies(language, page)) {
             is ResponseWrapper.Success -> {
                 _nowPlayingMovies.value = response.data
+                _errorMessage.value = null
             }
             is ResponseWrapper.Error -> {
                 _errorMessage.value = response.message
@@ -50,6 +57,7 @@ class MoviesViewModel(
         when (val response = movieRepository.getPopularMovies(language, page)) {
             is ResponseWrapper.Success -> {
                 _popularMovies.value = response.data
+                _errorMessage.value = null
             }
             is ResponseWrapper.Error -> {
                 _errorMessage.value = response.message
@@ -61,6 +69,7 @@ class MoviesViewModel(
         when (val response = movieRepository.getUpcomingMovies(language, page)) {
             is ResponseWrapper.Success -> {
                 _upcomingMovies.value = response.data
+                _errorMessage.value = null
             }
             is ResponseWrapper.Error -> {
                 _errorMessage.value = response.message

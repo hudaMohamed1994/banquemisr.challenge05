@@ -1,31 +1,36 @@
 package com.example.banquemisrchallenge05.ui
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
 import com.example.banquemisrchallenge05.ui.viewmodles.MoviesViewModel
-import com.example.domain.models.Movie
 
 @Composable
 fun MoviesScreen(navController: NavHostController, moviesViewModel: MoviesViewModel = viewModel()) {
     val tabs = listOf("Now Playing", "Popular", "Upcoming")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    // get selected Tab
     val nowPlayingMovies by moviesViewModel.nowPlayingMovies.collectAsState()
     val popularMovies by moviesViewModel.popularMovies.collectAsState()
     val upcomingMovies by moviesViewModel.upcomingMovies.collectAsState()
+    // For Error Handling
+    val errorMessage by moviesViewModel.errorMessage.collectAsState()
+    val isLoading by moviesViewModel.isLoading.collectAsState()
 
     val moviesLists = listOf(
         nowPlayingMovies,
@@ -33,8 +38,7 @@ fun MoviesScreen(navController: NavHostController, moviesViewModel: MoviesViewMo
         upcomingMovies
     )
 
-    // Fetch movies for selectedTabIndex
-    // selectedTabIndex is the key if changed call LaunchedEffect again according to the index
+    // selectedTabIndex is the key to recall the side effect
     LaunchedEffect(selectedTabIndex) {
         moviesViewModel.fetchMoviesByTab(selectedTabIndex)
     }
@@ -50,8 +54,17 @@ fun MoviesScreen(navController: NavHostController, moviesViewModel: MoviesViewMo
             }
         }
 
-        // Show loading indicator or error message if needed
-        if (nowPlayingMovies.isEmpty() && selectedTabIndex == 0) {
+        // Show error message if exists
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        // Show loading indicator
+        if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         } else {
             MovieList(
@@ -62,40 +75,5 @@ fun MoviesScreen(navController: NavHostController, moviesViewModel: MoviesViewMo
                 }
             )
         }
-    }
-}
-
-@Composable
-fun MovieList(title: String, movies: List<Movie>, onMovieClick: (Int) -> Unit) {
-    Column {
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
-
-        if (movies.isEmpty()) {
-            Text(text = "No movies available", style = MaterialTheme.typography.bodyMedium)
-        } else {
-            LazyRow {
-                items(movies) { movie ->
-                    MovieItem(
-                        movie = movie,
-                        modifier = Modifier.padding(8.dp),
-                        onClick = { onMovieClick(movie.id) })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MovieItem(movie: Movie, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Column(modifier = modifier.clickable(onClick = onClick)) {
-        Image(
-            painter = rememberImagePainter(movie.posterPath),
-            contentDescription = movie.title,
-            modifier = Modifier
-                .size(100.dp)
-                .padding(8.dp)
-        )
-        Text(text = movie.title, style = MaterialTheme.typography.bodyMedium)
-        Text(text = movie.releaseDate, style = MaterialTheme.typography.bodySmall)
     }
 }
