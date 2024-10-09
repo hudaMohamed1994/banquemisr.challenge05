@@ -5,3 +5,4 @@ Add OkHttp interceptor to manage API key securely for all network requests
 Use Jetpack Compose For Reactive UI 
 Implement Coroutines for handling asynchronous operations such as
 network requests
+Compose Navigation To navigate Between Screens 
