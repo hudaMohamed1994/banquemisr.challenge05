@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.domain.models.Movie
 
@@ -17,7 +18,7 @@ import com.example.domain.models.Movie
 fun MovieItem(movie: Movie, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column(modifier = modifier.clickable(onClick = onClick)) {
         Image(
-            painter = rememberImagePainter(movie.posterPath),
+            painter = rememberAsyncImagePainter(movie.posterPath),
             contentDescription = movie.title,
             modifier = Modifier
                 .size(100.dp)

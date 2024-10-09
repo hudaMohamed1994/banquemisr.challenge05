@@ -16,11 +16,11 @@ class MovieDetailViewModel(private val movieRepository: MovieRepository) : ViewM
         viewModelScope.launch {
             when (val response = movieRepository.getMovieDetails(movieId)) {
                 is ResponseWrapper.Success -> {
-                    MovieDetailState.Success(response.data)
+                    _movieDetailState.value = MovieDetailState.Success(response.data)
                 }
 
                 is ResponseWrapper.Error -> {
-                    MovieDetailState.Error(response.message)
+                    _movieDetailState.value = MovieDetailState.Error(response.message)
 
                 }
             }

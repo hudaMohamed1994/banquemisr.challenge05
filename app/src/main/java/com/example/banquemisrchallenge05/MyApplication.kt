@@ -1,4 +1,4 @@
-package com.example
+package com.example.banquemisrchallenge05
 
 import android.app.Application
 import com.example.banquemisrchallenge05.koin.appModule

@@ -8,6 +8,4 @@ import org.koin.dsl.module
 val dataModule = module {
     single { RetrofitInstance.getApiService() }
     single<MovieRepository> { MovieRepositoryImpl(get()) }
-
-
 }
