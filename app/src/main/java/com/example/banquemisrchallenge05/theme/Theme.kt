@@ -1,4 +1,4 @@
-package com.example.banquemisrchallenge05.ui.theme
+package com.example.banquemisrchallenge05.theme
 
 import android.app.Activity
 import android.os.Build

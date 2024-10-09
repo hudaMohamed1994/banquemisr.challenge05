@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "banquemisr.challenge05"
 include ':app'
+include ':data'
+include ':domain'

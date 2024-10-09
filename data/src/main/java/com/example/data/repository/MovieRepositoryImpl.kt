@@ -1,22 +1,62 @@
 package com.example.data.repository
 
-import com.example.data.models.MovieResponse
+import com.example.data.models.toDomainModel
 import com.example.data.remote.ApiService
+import com.example.domain.models.Movie // Import your domain model
+import com.example.domain.repositories.MovieRepository
+import com.example.domain.utils.ResponseWrapper
 
-class MovieRepository(private val apiService: ApiService) {
+class MovieRepositoryImpl(private val apiService: ApiService) : MovieRepository {
 
-    suspend fun getNowPlayingMovies(language: String = "en-US", page: Int = 1): MovieResponse? {
-        val response = apiService.getNowPlayingMovies(language, page)
-        return if (response.isSuccessful) response.body() else null
+    override suspend fun getNowPlayingMovies(
+        language: String,
+        page: Int
+    ): ResponseWrapper<List<Movie>> { // Change to List<Movie>
+        return try {
+            val response = apiService.getNowPlayingMovies(language, page)
+            if (response.isSuccessful && response.body() != null) {
+                // Convert the MovieDTO list to Movie list
+                val movies = response.body()!!.results.map { it.toDomainModel() }
+                ResponseWrapper.Success(movies)
+            } else {
+                ResponseWrapper.Error("Error: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ResponseWrapper.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
     }
 
-    suspend fun getPopularMovies(language: String = "en-US", page: Int = 1): MovieResponse? {
-        val response = apiService.getPopularMovies(language, page)
-        return if (response.isSuccessful) response.body() else null
+    override suspend fun getPopularMovies(
+        language: String,
+        page: Int
+    ): ResponseWrapper<List<Movie>> { // Change to List<Movie>
+        return try {
+            val response = apiService.getPopularMovies(language, page)
+            if (response.isSuccessful && response.body() != null) {
+                val movies = response.body()!!.results.map { it.toDomainModel() }
+                ResponseWrapper.Success(movies)
+            } else {
+                ResponseWrapper.Error("Error: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ResponseWrapper.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
     }
 
-    suspend fun getUpcomingMovies(language: String = "en-US", page: Int = 1): MovieResponse? {
-        val response = apiService.getUpcomingMovies(language, page)
-        return if (response.isSuccessful) response.body() else null
+    override suspend fun getUpcomingMovies(
+        language: String,
+        page: Int
+    ): ResponseWrapper<List<Movie>> { // Change to List<Movie>
+        return try {
+            val response = apiService.getUpcomingMovies(language, page)
+            if (response.isSuccessful && response.body() != null) {
+                val movies = response.body()!!.results.map { it.toDomainModel() }
+                ResponseWrapper.Success(movies)
+            } else {
+                ResponseWrapper.Error("Error: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            ResponseWrapper.Error(e.localizedMessage ?: "Unknown error occurred")
+        }
     }
 }

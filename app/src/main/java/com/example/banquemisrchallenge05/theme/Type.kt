@@ -1,4 +1,4 @@
-package com.example.banquemisrchallenge05.ui.theme
+package com.example.banquemisrchallenge05.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
