@@ -25,7 +25,7 @@ fun MovieDetailScreen(movieId: Int, navController: NavController) {
         is MovieDetailViewModel.MovieDetailState.Loading -> {
             Column(modifier = Modifier.padding(16.dp)) {
                 CircularProgressIndicator()
-                Text(text = "Loading movie details...", modifier = Modifier.padding(top = 8.dp))
+                Text(text = "Loading movie details , please wait .... ", modifier = Modifier.padding(top = 8.dp))
             }
         }
         is MovieDetailViewModel.MovieDetailState.Success -> {

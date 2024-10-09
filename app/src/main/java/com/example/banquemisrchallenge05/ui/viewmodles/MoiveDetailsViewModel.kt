@@ -30,9 +30,7 @@ class MovieDetailViewModel(private val movieRepository: MovieRepository) : ViewM
 
     sealed class MovieDetailState {
         data object Loading : MovieDetailState()
-        data class Success(val movie: MovieDetail) :
-            MovieDetailState() // Replace MovieDetail with your domain model
-
+        data class Success(val movie: MovieDetail) : MovieDetailState()
         data class Error(val message: String) : MovieDetailState()
     }
 }

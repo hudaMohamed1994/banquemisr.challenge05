@@ -8,6 +8,6 @@ interface MovieRepository {
     suspend fun getNowPlayingMovies(language: String, page: Int): ResponseWrapper<List<Movie>>
     suspend fun getPopularMovies(language: String, page: Int): ResponseWrapper<List<Movie>>
     suspend fun getUpcomingMovies(language: String, page: Int): ResponseWrapper<List<Movie>>
-    suspend fun getMovieDetails(movieId: Int): ResponseWrapper<MovieDetail> // Replace with your actual MovieDetail model
+    suspend fun getMovieDetails(movieId: Int): ResponseWrapper<MovieDetail>
 
 }
